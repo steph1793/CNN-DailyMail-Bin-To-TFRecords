@@ -56,53 +56,53 @@ def make_TFRecords(data_path, new_data_path):
 	"""
 
 	print("Starting ...")
-  	if not os.path.exists(new_data_path): # if new_data_ath doesn't exist, we create it
-    	os.makedirs(new_data_path)
+	if not os.path.exists(new_data_path): # if new_data_ath doesn't exist, we create it
+		os.makedirs(new_data_path)
 
-  	filelist = glob.glob(data_path+"/**/*.bin", recursive=True) # get the list of datafiles, even those in subfolders
-  	assert filelist, "No binary files"
+	filelist = glob.glob(data_path+"/**/*.bin", recursive=True) # get the list of datafiles, even those in subfolders
+	assert filelist, "No binary files"
   
-  	# The next two lines allows us to extract the names of the files in data_path and the names of the files in subfolders of data_path
-  	# (with the subfolder attached to the latter). example : [test000.bin, test001.bin, subfold/test000.bin , ...]
-  	common_path = os.path.commonpath(filelist)
-  	files = [os.path.splitext(x.replace(common_path, ""))[0]  for x in filelist]
+	# The next two lines allows us to extract the names of the files in data_path and the names of the files in subfolders of data_path
+	# (with the subfolder attached to the latter). example : [test000.bin, test001.bin, subfold/test000.bin , ...]
+	common_path = os.path.commonpath(filelist)
+	files = [os.path.splitext(x.replace(common_path, ""))[0]  for x in filelist]
   
-  	# WE iterate over each binary file
-  	for f, filename in zip(filelist, files):
-    	try:
-      		file =  open(f, 'rb')
+	# WE iterate over each binary file
+	for f, filename in zip(filelist, files):
+		try:
+			file =  open(f, 'rb')
 		except:
-      		print("Cannot open file : {}".format(f))
-      		continue
+			print("Cannot open file : {}".format(f))
+			continue
      
-     	# we build the name of the new tfrecord file
-    	record_file = '{}/{}.tfrecords'.format(new_data_path, filename)
+		# we build the name of the new tfrecord file
+		record_file = '{}/{}.tfrecords'.format(new_data_path, filename)
 
-    	#For the bin files stored in subfolders, we make sure to create equivalent subfolders in the new_data_path
-    	record_dir = os.path.dirname(record_file)
-    	if not os.path.exists(record_dir):
-      		os.makedirs(record_dir)
+		#For the bin files stored in subfolders, we make sure to create equivalent subfolders in the new_data_path
+		record_dir = os.path.dirname(record_file)
+		if not os.path.exists(record_dir):
+			os.makedirs(record_dir)
 
-  		# Create a writer for the current bin file
-    	with tf.io.TFRecordWriter(record_file) as writer:
-    		# We get all the (article, abstract ) pairs stored in the bin file one by one . The pair is an example_pb2 object
-      		for e in example_generator(file):
-        		try:
-        			# Article and abstract extraction
-          			article_text = e.features.feature['article'].bytes_list.value[0].decode()
-          			abstract_text = e.features.feature['abstract'].bytes_list.value[0].decode()
+		# Create a writer for the current bin file
+		with tf.io.TFRecordWriter(record_file) as writer:
+			# We get all the (article, abstract ) pairs stored in the bin file one by one . The pair is an example_pb2 object
+			for e in example_generator(file):
+				try:
+					# Article and abstract extraction
+					article_text = e.features.feature['article'].bytes_list.value[0].decode()
+					abstract_text = e.features.feature['abstract'].bytes_list.value[0].decode()
+
+					# Build tf.Train.Example object and write it in the current tfrecord file
+					tf_example = art_abs_example(article_text, abstract_text)
+					writer.write(tf_example.SerializeToString())
+
+				except ValueError:
+					tf.logging.error('Failed to get article or abstract from example')
+					continue
+				if len(article_text) == 0   :
+					tf.logging.warning('Found an example with empty article text. Skipping it.')
           
-          			# Build tf.Train.Example object and write it in the current tfrecord file
-          			tf_example = art_abs_example(article_text, abstract_text)
-          			writer.write(tf_example.SerializeToString())
-
-        		except ValueError:
-          			tf.logging.error('Failed to get article or abstract from example')
-          			continue
-        		if len(article_text) == 0   :
-          			tf.logging.warning('Found an example with empty article text. Skipping it.')
-          
-    	print("Chunked file {} processed and saved to {}".format(f, record_file))
+		print("Chunked file {} processed and saved to {}".format(f, record_file))
 
 
 
@@ -112,7 +112,7 @@ if __name__ == "__main__":
 	parser.add_argument("--new_data_path", help="The new folder where to store the tfrecords files")
 	args = parser.parse_args()
 
-	assert parser.data_path, "Data path needed"
-	assert parser.new_data_path, "New data path needed"
+	assert args.data_path, "Data path needed"
+	assert args.new_data_path, "New data path needed"
 
-	make_TFRecords(parser.data_path, parser.new_data_path)
+	make_TFRecords(args.data_path, args.new_data_path)
