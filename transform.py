@@ -24,10 +24,10 @@ def example_generator(file):
 
 def art_abs_example(article, abstract):
   	"""
-	Builds a tf.train.Example object from an article and an abstract
-	args:	
-		article : string bytes 
-		abstract : string bytes
+		Builds a tf.train.Example object from an article and an abstract
+		args:	
+			article : string bytes 
+			abstract : string bytes
   	"""
 
 	def _bytes_feature(value):
