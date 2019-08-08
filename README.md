@@ -14,3 +14,12 @@ With this link (https://drive.google.com/file/d/0BzQ6rtO2VN95a0c3TlZCWkl3aU0/vie
 ## - Launch this project
 With the following command launch the project to transform your bin files into tfrecords files
 python transform.py --data_path *<the_contaning_the_bins_to_be_transformed>* --new_data_path *<the_new_folder_for_tfrecods_files>*
+
+
+## Requirements
+- ntpath
+- os
+- glob
+- struct
+- tensorflow >= 1.14
+- argparse
