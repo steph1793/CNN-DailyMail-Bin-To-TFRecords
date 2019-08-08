@@ -24,16 +24,16 @@ def example_generator(file):
 
 def art_abs_example(article, abstract):
   	"""
-		Builds a tf.train.Example object from an article and an abstract
-		args:	
-			article : string bytes 
-			abstract : string bytes
+	Builds a tf.train.Example object from an article and an abstract
+	args:	
+		article : string bytes 
+		abstract : string bytes
   	"""
 
 	def _bytes_feature(value):
 		"""Returns a bytes_list from a string / byte."""
 		if isinstance(value, type(tf.constant(0))):
-	  		value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
+  			value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
 		return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value.encode()]))
 
 	feature = {
