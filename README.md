@@ -6,14 +6,18 @@ In this context, it is interesting to transform the .bin files into .tfrecords f
 
 To transform CNN Dailymail .bin chunk files into .tfrecords, follow the next steps.
 
-## - Download the Dataset:
+## Download the Dataset:
 With this link (https://drive.google.com/file/d/0BzQ6rtO2VN95a0c3TlZCWkl3aU0/view?usp=sharing), you can download the preprocessed dataset compressed into a zip file.
 
-## - Unzip the Downloaded file
+## Unzip the Downloaded file
 
-## - Launch this project
+## Launch this project
 With the following command launch the project to transform your bin files into tfrecords files
 python transform.py --data_path *<the_contaning_the_bins_to_be_transformed>* --new_data_path *<the_new_folder_for_tfrecods_files>*
+
+## Download
+Instead of following the previous, you can download this file, uncompress it and enjoy the preprocessed cnn-dailymail dataset
+https://drive.google.com/open?id=1uHrMWd7Pbs_-DCl0eeMxePbxgmSce5LO
 
 
 ## Requirements
